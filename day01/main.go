@@ -16,15 +16,71 @@ type Dial struct {
 	capacity int
 }
 
+type Incrementor interface {
+	mustIncrement(current, amount int) (int, int)
+}
+
+// ZeroIncrementor will increment when dial is at zero
+type ZeroIncrementor struct {
+	capacity int
+}
+
+// mustIncrement returns incrementCount and remainder
+func (i *ZeroIncrementor) mustIncrement(current, amount int) (int, int) {
+	r := (current + amount) % i.capacity
+	if r == 0 {
+		return 1, 0
+	}
+	return 0, r
+}
+
+type PassThroughZeroIncrementor struct {
+	capacity int
+}
+
+func mod(a, b int) int {
+	return ((a % b) + b) % b
+}
+
+// mustIncrement returns incrementCount and remainder
+func (i *PassThroughZeroIncrementor) mustIncrement(current, amount int) (int, int) {
+	// We need to factor in if current > 0 and then the amount brings below 0
+	// this means we havent accounted for the dial going through zero
+	additional := 0
+	if current > 0 {
+		additional = 1
+	}
+	total := current + amount
+	// early exit
+	if total == 0 {
+		return 1, 0
+	}
+	q, r := total/i.capacity, mod(total, i.capacity)
+	if total < 0 {
+		// truncates towards zero so need to turn positive + 1
+		q := (-q) + additional
+		return q, r
+	}
+	return q, r
+}
+
+func NewZeroIncrementor() *ZeroIncrementor {
+	return &ZeroIncrementor{capacity: DialCapacity}
+}
+
+func NewPassThroughZeroIncrementor() *PassThroughZeroIncrementor {
+	return &PassThroughZeroIncrementor{capacity: DialCapacity}
+}
+
 func NewDial(number int) *Dial {
 	return &Dial{Number: number, capacity: DialCapacity}
 }
 
-func (d *Dial) Rotate(amount int) {
-	d.Number = (d.Number + amount) % d.capacity
-	if d.Number == 0 {
-		d.Counter++
-	}
+func (d *Dial) Rotate(amount int, incrementor Incrementor) {
+	// diff needs to be either below 0 or above capacity
+	inc, num := incrementor.mustIncrement(d.Number, amount)
+	d.Number = num
+	d.Counter += inc
 }
 
 func ParseRotation(rotation string) (int, error) {
@@ -53,6 +109,7 @@ func ParseRotation(rotation string) (int, error) {
 }
 
 func Part1(input []string) (int, error) {
+	zeroIncrementor := NewZeroIncrementor()
 	dial := NewDial(50)
 
 	for _, rotation := range input {
@@ -61,7 +118,22 @@ func Part1(input []string) (int, error) {
 		if err != nil {
 			return 0, err
 		}
-		dial.Rotate(amount)
+		dial.Rotate(amount, zeroIncrementor)
+	}
+	return dial.Counter, nil
+}
+
+func Part2(input []string) (int, error) {
+	passThroughZeroIncrementor := NewPassThroughZeroIncrementor()
+	dial := NewDial(50)
+
+	for _, rotation := range input {
+		amount, err := ParseRotation(rotation)
+
+		if err != nil {
+			return 0, err
+		}
+		dial.Rotate(amount, passThroughZeroIncrementor)
 	}
 	return dial.Counter, nil
 }
@@ -82,7 +154,14 @@ func main() {
 		panic(err)
 	}
 
+	d2, err := Part2(input)
+
+	if err != nil {
+		panic(err)
+	}
+
 	// Pipe out results to stdout
 	fmt.Println("Part 1:", d1)
+	fmt.Println("Part 2:", d2)
 
 }
