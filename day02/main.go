@@ -127,7 +127,7 @@ func Part1(input []string) (int, error) {
 			if IsRepeatedTwice(num) {
 				n, err := strconv.Atoi(num)
 				if err != nil {
-					return 0, fmt.Errorf("converting numeric string %q to int: %w", err)
+					return 0, fmt.Errorf("converting numeric string %q to int: %w", num, err)
 				}
 				ans += n
 			}
@@ -148,7 +148,7 @@ func Part2(input []string) (int, error) {
 			if IsRepeated(num) {
 				n, err := strconv.Atoi(num)
 				if err != nil {
-					return 0, fmt.Errorf("converting numeric string %q to int: %w", err)
+					return 0, fmt.Errorf("converting numeric string %q to int: %w", num, err)
 				}
 				ans += n
 			}
