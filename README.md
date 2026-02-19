@@ -136,13 +136,10 @@ go test ./...
 Latest full run in this repository:
 
 - `day01`: passing
+- `day02`: passing
 - `day03`: passing
 - `day04`: passing
-- `day02`: build failure due to `fmt.Errorf` formatting mismatch in:
-  - `day02/main.go` line 130
-  - `day02/main.go` line 151
-
-Once those are fixed, `go test ./...` should be green again.
+- `common`: no test files
 
 ## Conventions in this repo
 
