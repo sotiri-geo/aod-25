@@ -98,11 +98,13 @@ go run ./day03
 
 - Models the warehouse as a `Grid` of bytes (`@` for roll of paper).
 - For each roll, checks 8-neighborhood adjacency.
-- Counts rolls accessible to forklift (`< 4` neighboring rolls).
+- `Part1`: counts currently accessible rolls (`< 4` neighboring rolls).
+- `Part2`: repeatedly removes accessible rolls from the grid until no more can be removed, then returns total removed.
 - Key APIs:
   - `NewGrid(input [][]byte) *Grid`
   - `CanAccessRollOfPaper(row, col int) bool`
   - `ProcessRollOfPaper() int`
+  - `ProcessRollOfPaperWithUpdate() int`
 
 Run:
 
