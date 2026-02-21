@@ -55,6 +55,32 @@ func (g *Grid) CanAccessRollOfPaper(row, col int) bool {
 	return rollsOfPaper < 4
 }
 
+// ProcessRollOfPaperWithUpdate will keep looping and attempting
+// to remove in a greedy way and update the state of the grid.
+// Will break out from loop after a full scan with no identifiable
+// rolls that can be accessed
+func (g *Grid) ProcessRollOfPaperWithUpdate() int {
+	total := 0
+
+	for {
+		removed := false
+		for i := range len(g.input) {
+			for j := range len(g.input[0]) {
+				if g.CanAccessRollOfPaper(i, j) {
+					total++
+					// update cell
+					g.input[i][j] = '.'
+					removed = true
+				}
+			}
+		}
+		if !removed {
+			break
+		}
+	}
+	return total
+}
+
 // ProcessRollOfPaper counts the numbers of roll papers the forklift
 // can access
 func (g *Grid) ProcessRollOfPaper() int {
@@ -88,4 +114,5 @@ func main() {
 	grid := NewGrid(input)
 
 	fmt.Println("Part1:", grid.ProcessRollOfPaper())
+	fmt.Println("Part2:", grid.ProcessRollOfPaperWithUpdate())
 }

@@ -78,4 +78,24 @@ func TestGrid(t *testing.T) {
 			t.Errorf("got %d, want %d", got, 13)
 		}
 	})
+	t.Run("ProcessRollsOfPaperWithUpdate", func(t *testing.T) {
+		grid := main.NewGrid([][]byte{
+			[]byte("..@@.@@@@."),
+			[]byte("@@@.@.@.@@"),
+			[]byte("@@@@@.@.@@"),
+			[]byte("@.@@@@..@."),
+			[]byte("@@.@@@@.@@"),
+			[]byte(".@@@@@@@.@"),
+			[]byte(".@.@.@.@@@"),
+			[]byte("@.@@@.@@@@"),
+			[]byte(".@@@@@@@@."),
+			[]byte("@.@.@@@.@."),
+		})
+
+		got := grid.ProcessRollOfPaperWithUpdate()
+
+		if got != 43 {
+			t.Errorf("got %d, want %d", got, 43)
+		}
+	})
 }
