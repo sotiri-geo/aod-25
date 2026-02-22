@@ -19,7 +19,11 @@ Personal repository for solving Advent of Code 2025 puzzles in Go.
 ```text
 aod-2025/
 ├── common/
-│   └── asserts.go
+│   ├── asserts.go
+│   ├── queue.go
+│   ├── queue_test.go
+│   ├── set.go
+│   └── set_test.go
 ├── day01/
 │   ├── input.txt
 │   ├── main.go
@@ -112,6 +116,36 @@ Run:
 go run ./day04
 ```
 
+## Common data structures
+
+The `common/` package now includes reusable generic data structures used across puzzle days.
+
+### Queue (`common/queue.go`)
+
+- Generic FIFO queue with head-index compaction strategy.
+- Supports:
+  - `NewQueue[T any](queue []T) *Queue[T]`
+  - `Enqueue(element T)`
+  - `Dequeue() (T, error)`
+  - `Peek() (T, error)`
+  - `Len() int`
+  - `IsEmpty() bool`
+- Errors:
+  - `ErrDequeueEmptyQueue`
+  - `ErrPeakEmptyQueue`
+
+### Set (`common/set.go`)
+
+- Generic set backed by `map[T]bool`.
+- Constructor-only initialization:
+  - `NewSet[T comparable](s []T) *set[T]`
+- Supports:
+  - `Add(v T)`
+  - `Remove(v T)`
+  - `Has(v T) bool`
+  - `Len() int`
+  - `IsEmpty() bool`
+
 ## How to run locally
 
 From repo root:
@@ -133,7 +167,7 @@ go test ./day04
 go test ./...
 ```
 
-## Current test/build status (as of 2026-02-19)
+## Current test/build status (as of 2026-02-22)
 
 Latest full run in this repository:
 
@@ -141,7 +175,7 @@ Latest full run in this repository:
 - `day02`: passing
 - `day03`: passing
 - `day04`: passing
-- `common`: no test files
+- `common`: passing
 
 ## Conventions in this repo
 
