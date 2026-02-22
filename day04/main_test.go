@@ -98,4 +98,25 @@ func TestGrid(t *testing.T) {
 			t.Errorf("got %d, want %d", got, 43)
 		}
 	})
+	t.Run("QueueBasedUpdate", func(t *testing.T) {
+		got, err := main.QueueBasedUpdate([][]byte{
+			[]byte("..@@.@@@@."),
+			[]byte("@@@.@.@.@@"),
+			[]byte("@@@@@.@.@@"),
+			[]byte("@.@@@@..@."),
+			[]byte("@@.@@@@.@@"),
+			[]byte(".@@@@@@@.@"),
+			[]byte(".@.@.@.@@@"),
+			[]byte("@.@@@.@@@@"),
+			[]byte(".@@@@@@@@."),
+			[]byte("@.@.@@@.@."),
+		})
+		if err != nil {
+			t.Fatalf("should not error: %+v", err)
+		}
+
+		if got != 43 {
+			t.Errorf("got %d, want %d", got, 43)
+		}
+	})
 }

@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+
+	"github.com/sotiri-geo/aod-2025/common"
 )
 
 // Grid stores a 2 Dimentional byte array
@@ -15,6 +17,14 @@ type Grid struct {
 type Point struct {
 	row int
 	col int
+}
+
+func cloneGrid(input [][]byte) [][]byte {
+	cloned := make([][]byte, len(input))
+	for i := range input {
+		cloned[i] = append([]byte(nil), input[i]...)
+	}
+	return cloned
 }
 
 // NewGrid creates a new Grid object and returns it
@@ -81,6 +91,84 @@ func (g *Grid) ProcessRollOfPaperWithUpdate() int {
 	return total
 }
 
+func QueueBasedUpdate(input [][]byte) (int, error) {
+	if len(input) == 0 || len(input[0]) == 0 {
+		return 0, nil
+	}
+
+	// Init datastructures
+	inDegree := map[Point]int{}
+	queue := common.NewQueue([]Point{})
+	graph := map[Point][]Point{}
+	seen := common.NewSet([]Point{})
+	ans := 0
+	n, m := len(input), len(input[0])
+	directions := [8][2]int{
+		{-1, 0}, {1, 0}, {0, -1}, {0, 1},
+		{-1, 1}, {-1, -1}, {1, 1}, {1, -1},
+	}
+
+	// Populate the inDegree of each node that is a roll
+	for row := range n {
+		for col := range m {
+			// Only process if current element is a roll
+			if input[row][col] != '@' {
+				continue
+			}
+			p := Point{row: row, col: col}
+			count := 0
+			// Check 8 directionally around roll to update indegree of any adjacent rolls
+			for _, d := range directions {
+				px := Point{row: row + d[0], col: col + d[1]}
+				if inBounds(&px, input) && input[px.row][px.col] == '@' {
+					count++
+					// update graph: p directionally connect to px
+					graph[p] = append(graph[p], px)
+				}
+			}
+
+			inDegree[p] = count
+			// If point is accessable, add to queue
+			if count < 4 {
+				queue.Enqueue(p)
+				seen.Add(p)
+			}
+		}
+	}
+
+	// Process queue and update
+
+	for queue.Len() > 0 {
+		// pop a point off the queue
+		p, err := queue.Dequeue()
+		if err != nil {
+			return 0, fmt.Errorf("dequeueing point %v: %w", p, err)
+		}
+		// stale queue entry
+		if _, exists := inDegree[p]; !exists {
+			continue
+		}
+
+		// Remove point from InDegree
+		delete(inDegree, p)
+		for _, nei := range graph[p] {
+			if _, exists := inDegree[nei]; exists {
+				// Decrement InDegree of all adjacent neighbours
+				inDegree[nei]--
+				// New node we can add to the queue
+				if inDegree[nei] < 4 && !seen.Has(nei) {
+					seen.Add(nei)
+					queue.Enqueue(nei)
+				}
+			}
+		}
+		// Add to count
+		ans++
+	}
+
+	return ans, nil
+}
+
 // ProcessRollOfPaper counts the numbers of roll papers the forklift
 // can access
 func (g *Grid) ProcessRollOfPaper() int {
@@ -111,8 +199,16 @@ func main() {
 	// Parse input
 	input := bytes.Split(data, []byte{'\n'})
 	input = input[:len(input)-1]
-	grid := NewGrid(input)
+	grid := NewGrid(cloneGrid(input))
 
 	fmt.Println("Part1:", grid.ProcessRollOfPaper())
-	fmt.Println("Part2:", grid.ProcessRollOfPaperWithUpdate())
+	fmt.Println("Part2:", NewGrid(cloneGrid(input)).ProcessRollOfPaperWithUpdate())
+
+	// Using Graph Algo with FIFO Queue
+	ans, err := QueueBasedUpdate(cloneGrid(input))
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Part2WithGraph:", ans)
 }
