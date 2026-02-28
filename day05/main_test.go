@@ -16,7 +16,6 @@ func TestParseBounds(t *testing.T) {
 	}
 }
 
-// TestUnionMergeFor
 func TestUnionMergeFor(t *testing.T) {
 	testCases := []struct {
 		name   string

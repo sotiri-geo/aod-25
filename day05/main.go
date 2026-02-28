@@ -41,19 +41,15 @@ func UnionMerge(bounds []Bounds) []Bounds {
 			continue
 		}
 
-		// Check for overlapping
 		left := b[0]
 		right := b[1]
 		for len(mergedIntervals) > 0 && mergedIntervals[len(mergedIntervals)-1][1] >= left {
 			top := mergedIntervals[len(mergedIntervals)-1]
-			// Update unioned bounds
 			right = max(right, top[1])
 			left = min(left, top[0])
-			// pop
 			mergedIntervals = mergedIntervals[:len(mergedIntervals)-1]
 		}
 
-		// Add back to stack
 		mergedIntervals = append(mergedIntervals, Bounds{left, right})
 	}
 
@@ -91,7 +87,6 @@ func main() {
 	ids := make([]int, 0, len(data))
 
 	withRanges := true
-	// Parse input
 	for r := range strings.SplitSeq(strings.TrimSpace(string(data)), "\n") {
 		if r == "" {
 			withRanges = false
