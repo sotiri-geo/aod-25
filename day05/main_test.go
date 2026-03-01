@@ -100,3 +100,16 @@ func TestPart1(t *testing.T) {
 		t.Errorf("got %d, want %d", got, want)
 	}
 }
+
+func TestPart2(t *testing.T) {
+	freshIDRanges := []string{
+		"3-5", "10-14", "16-20", "12-18",
+	}
+
+	got := main.Part2(freshIDRanges)
+	want := 14
+
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+}

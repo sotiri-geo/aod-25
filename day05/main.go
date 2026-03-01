@@ -77,6 +77,24 @@ func Part1(freshIDRanges []string, ids []int) int {
 	return total
 }
 
+func Part2(freshIDRanges []string) int {
+	total := 0
+
+	bounds := make([]Bounds, 0, len(freshIDRanges))
+
+	for _, r := range freshIDRanges {
+		bounds = append(bounds, ParseBounds(r))
+	}
+
+	unionBounds := UnionMerge(bounds)
+
+	for _, b := range unionBounds {
+		total += b[1] - b[0] + 1
+	}
+
+	return total
+}
+
 func main() {
 	data, err := os.ReadFile("./day05/input.txt")
 	if err != nil {
@@ -101,4 +119,5 @@ func main() {
 	}
 
 	fmt.Println("Part1:", Part1(freshIDRanges, ids))
+	fmt.Println("Part2:", Part2(freshIDRanges))
 }
