@@ -7,6 +7,13 @@ import (
 	main "github.com/sotiri-geo/aod-2025/day06"
 )
 
+var sampleLines = []string{
+	"123 328  51 64 ",
+	" 45 64  387 23 ",
+	"  6 98  215 314",
+	"*   +   *   +  ",
+}
+
 func TestRollingSum(t *testing.T) {
 	t.Run("MultiplePositiveNumbers", func(t *testing.T) {
 		got := main.RollingSum([]int{1, 2, 3}...)
@@ -73,6 +80,28 @@ func TestExtractColumns(t *testing.T) {
 	}
 }
 
+func TestRightToLeftAdd(t *testing.T) {
+	input := []string{"64", "23", "314"}
+
+	got := main.RightToLeftAdd(input)
+	want := 1058
+
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+}
+
+func TestRightToLeftMultiply(t *testing.T) {
+	input := []string{"51", "387", "215"}
+
+	got := main.RightToLeftMultiply(input)
+	want := 3253600
+
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+}
+
 func TestPart1(t *testing.T) {
 	input := [][]string{
 		{"123", "328", "51", "64"},
@@ -86,5 +115,30 @@ func TestPart1(t *testing.T) {
 
 	if got != want {
 		t.Errorf("got %d, want %d", got, want)
+	}
+}
+
+func TestPart2(t *testing.T) {
+	input := [][]string{
+		{"123", "328", "51", "64"},
+		{"45", "64", "387", "23"},
+		{"6", "98", "215", "314"},
+		{"*", "+", "*", "+"},
+	}
+
+	got := main.Part2(input)
+	want := 3263827
+
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+}
+
+func TestPart2FromLines(t *testing.T) {
+	got := main.Part2FromLines(sampleLines)
+	want := "3263827"
+
+	if got.String() != want {
+		t.Errorf("got %s, want %s", got.String(), want)
 	}
 }
