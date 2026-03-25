@@ -21,6 +21,12 @@ func TestSplitBeam(t *testing.T) {
 			size:       3,
 			want:       common.NewSet([]int{0, 2}),
 		},
+		"DoubleBeamWithSingleSplit": {
+			beamIndex:  common.NewSet([]int{1, 2}),
+			splitIndex: common.NewSet([]int{1}),
+			size:       3,
+			want:       common.NewSet([]int{0, 2}),
+		},
 	}
 
 	for name, tc := range testCases {
