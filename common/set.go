@@ -42,3 +42,18 @@ func (s *Set[T]) IsEmpty() bool {
 func (s *Set[T]) Add(v T) {
 	s.Set[v] = true
 }
+
+// Equal compares both sets and returns true if they have identical elements
+// and false otherwise.
+func (s *Set[T]) Equal(other *Set[T]) bool {
+	if s.Len() != other.Len() {
+		return false
+	}
+
+	for v := range s.Set {
+		if !other.Has(v) {
+			return false
+		}
+	}
+	return true
+}
